@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Change Branch</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Change Your Default Branch</h1>
+
+      <div class="well">
+        <p>Before we begin, let's talk about what is going to happen here.</p>
+        <p>For each repository you check the box on below, the following will happen when you submit this form:</p>
+        <p>1. If the new branch name you have chosen does not exist, the tool will create it.  To do this it must add a deploy key, which it will remove after the branch is added.</p>
+        <p>2. Once the branch exists, the tool will update the rpository and set the default branch to the one you have chosen.</p>
+        <p>Currently it does not remove any <code>master</code> branches from your repository.</p>
+        <p>Sound good?  Comfortable with this plan? Ok then, let's do it!</p>
+      </div>
+
+      <form method="POST" action="/processing">
+
+        <h3>Step 1: Choose Your New Branch Name</h3>
+        <p>Common branch names are <code>main</code>, <code>prime</code> and <code>trunk</code>, but you do you.  Pick a name that is meaningful.</p>
+
+        <label>
+          New Default Branch:
+          <input type="text" name="default_branch" value="prime" />
+        </label>
+
+        <h3>Step 2: Select Your Repositories</h3>
+        <p>These are repositories that you are the <code>owner</code> of in Github.  Select the ones you want to change.</p>
+        <ul>
+        {{range .Repositories}}
+          <li>
+            <input type="checkbox" name="repository[]" value="{{.FullName}}" id="repo-{{.FullName}}" />
+            <label for="repo-{{.FullName}}">{{.FullName}}
+              {{if eq .Fork true}}<img src="fork.svg" alt="Fork" title="This repository is a fork." class="fork" />{{end}}
+              <span class="label">{{.DefaultBranch}}</span> 
+              <div class="description">{{.Description}}</div>
+            </label>
+          </li>
+        {{end}}
+        </ul>
+
+        <h3>Step 3: Commit!</h3>
+        <button id="convert">Update Default Branch</button>
+
+      </form>
+    </div>
+    <footer>
+      <div class="footer-inner">
+        <span class="blm">Black Lives Matter</span>
+        <p>An <a href="https://github.com/jmhobbs/change-default-branch">open-source project</a>.  Read the <a href="/terms-of-service">terms of service</a>.</p>
+        <p><a href="https://thenounproject.com/term/fork/5005/">fork</a> icon by <a href="https://thenounproject.com/DmitryBaranovskiy/">Dmitry Baranovskiy</a>, from <a href="https://thenounproject.com/">the Noun Project</a></p>
+      </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js" integrity="sha256-vrn14y7WH7zgEElyQqm2uCGSQrX/xjYDjniRUQx3NyU=" crossorigin="anonymous"></script>
+    <script src="repositories.js"></script>
+  </body>
+</html>

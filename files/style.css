@@ -1,0 +1,136 @@
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.container {
+  min-height: 100%;
+  margin-bottom: -7.25em;
+  margin: 1em 2em;
+}
+
+.cta {
+  border: 2px solid #000;
+  border-radius: 5px;
+  padding: 0.5em;
+  text-decoration: none;
+  color: #000;
+}
+.cta:hover {
+  background: #000;
+  border-color: #444;
+  color: #fff;
+}
+
+li label:hover {
+  background: #ff9;
+  cursor: pointer;
+}
+
+input[type=text] {
+  border: 1px solid #444;
+}
+input[type=text].error {
+  border-color: red;
+  background-color: #fff7f7;
+}
+
+.label {
+  font-size: 0.75em;
+  background: #CCC;
+  padding: 0.1em 0.5em;
+  margin: 0.25em;
+  border-radius: 0.4em;
+  display: inline-block;
+}
+
+.label.error {
+  background-color: #f00;
+  color: #fff;
+}
+
+.label.success {
+  background-color: #009400;
+  color: #fff;
+}
+
+.label.warning {
+  background-color: orange;
+}
+
+ul {
+  padding-inline-start: 0;
+}
+
+li {
+  margin: 0.5em 0;
+  list-style-type: none;
+}
+
+li input[type=checkbox] {
+  margin-right: 0.5em;
+}
+
+.well {
+  background: #eee;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+  border: 1px solid #CCC;
+  border-radius: 0.5em;
+  font-size: 0.9em;
+}
+
+h3 {
+  margin-top: 2em;
+}
+
+.description {
+  margin-left: 2em;
+  margin-bottom: 1.5em;
+  color: #666;
+  font-size: 0.7em;
+}
+
+img.fork {
+  height: 2em;
+  vertical-align: top;
+}
+
+footer {
+  height: 3.25em;
+  font-size: 0.75em;
+  color: #444;
+  margin-top: 4em;
+  background: #efefef;
+  padding: 1em 2em;
+}
+
+footer .blm {
+  float: right;
+  font-weight: bold;
+}
+
+footer p {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.processing-repository .state {
+  color: #6d6262;
+}
+
+.processing-repository.processing .state {
+  color: orange;
+}
+
+.processing-repository.error .state {
+  color: red;
+}
+
+.processing-repository.complete .state {
+  color: green;
+}
