@@ -39,13 +39,18 @@ input[type=text].error {
   background-color: #fff7f7;
 }
 
-.label {
+.label, .private {
   font-size: 0.75em;
   background: #CCC;
   padding: 0.1em 0.5em;
   margin: 0.25em;
   border-radius: 0.4em;
   display: inline-block;
+}
+
+.private {
+  color: white;
+  background: #1e5ed4;
 }
 
 .label.error {
@@ -75,13 +80,18 @@ li input[type=checkbox] {
   margin-right: 0.5em;
 }
 
-.well {
+.well, .alert {
   background: #eee;
   padding: 0.5em 1em;
   margin: 0.5em 0;
   border: 1px solid #CCC;
   border-radius: 0.5em;
   font-size: 0.9em;
+}
+
+.alert {
+  background-color: #ffa0a0;
+  border-color: red;
 }
 
 h3 {

@@ -57,6 +57,7 @@ type repository struct {
 	DefaultBranch string
 	Fork          bool
 	Description   string
+	Private       bool
 }
 
 func RepositoriesListHandler(w http.ResponseWriter, r *http.Request) {
@@ -94,6 +95,7 @@ func RepositoriesListHandler(w http.ResponseWriter, r *http.Request) {
 			DefaultBranch: repo.GetDefaultBranch(),
 			Fork:          repo.GetFork(),
 			Description:   repo.GetDescription(),
+			Private:       repo.GetPrivate(),
 		})
 	}
 
