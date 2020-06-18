@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/google/go-github/v32/github"
+	"github.com/gorilla/csrf"
 )
 
 func templateFromFile(path string) (*template.Template, error) {
@@ -103,7 +104,7 @@ func RepositoriesListHandler(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	err = tmpl.Execute(w, map[string][]repository{"Repositories": tmplData})
+	err = tmpl.Execute(w, map[string]interface{}{csrf.TemplateTag: csrf.TemplateField(r), "Repositories": tmplData})
 	if err != nil {
 		log.Println("error executing template:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -132,6 +133,7 @@ func RepositoryProcessingHandler(w http.ResponseWriter, r *http.Request) {
 	// todo: validation
 
 	data := map[string]interface{}{
+		"CSRFToken":    csrf.Token(r),
 		"Branch":       branch,
 		"Repositories": repos,
 	}

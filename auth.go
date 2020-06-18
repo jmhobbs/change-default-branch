@@ -38,7 +38,7 @@ func AuthCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/repositories", 302)
+	http.Redirect(w, r, "/repos/list", 302)
 }
 
 func AuthRedirectHandler(w http.ResponseWriter, r *http.Request) {

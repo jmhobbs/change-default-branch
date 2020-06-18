@@ -1,6 +1,9 @@
 $(function () {
   var hadErrors = false;
 
+  var csrfToken = $("meta[name=csrf-token]").attr("content");
+  console.log(csrfToken);
+
   $(".collapsible .state").on("click", function () {
     $(this).parents(".collapsible").toggleClass("collapsed");
   });
@@ -20,10 +23,13 @@ $(function () {
     next.find(".state").text("Processing...");
     $.ajax({
       type: "POST",
-      url: "/repositories/convert",
+      url: "/repos/convert",
       data: {
         repository: next.data("repo"),
         branch: ChangeBranchData.Branch,
+      },
+      headers: {
+        "X-CSRF-Token": csrfToken,
       },
       success: function (data, _, _) {
         next.removeClass("processing").addClass("complete");

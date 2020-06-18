@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Change Branch</title>
+    <title>Change Default Branch</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/style.css">
-    <meta name="csrf-token" content="{{.CSRFToken}}" />
   </head>
   <body>
     <div class="wrapper">
@@ -20,22 +19,9 @@
           </h1>
         </header>
         <div class="container">
-          <h1>Processing</h1>
-          <p>Hang tight, this can take a minute.</p>
-          <hr/>
-          <p>Changing Default Branch To <code>{{.Branch}}</code></p>
-          <hr/>
-          {{ range .Repositories}}
-          <div id="repo-{{.}}" data-repo="{{.}}" class="processing-repository pending">
-            <h3>{{.}}</h3>
-            <div class="collapsible collapsed">
-              <p class="state">Pending...</p>
-              <pre></pre>
-            </div>
-          </div>
-          {{end}}
-          <hr/>
-          <p class="all-done">Pretty easy right? Tell others so they can ditch the awful <code>master</code> branch.</p>
+          <h1>Not Found</h1>
+          <p>The page you are looking for is gone, or never was there to begin with.</p>
+          <a href="/" class="cta">Go Home</a>
         </div>
       </div>
       <footer>
@@ -46,10 +32,5 @@
         </div>
       </footer>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js" integrity="sha256-vrn14y7WH7zgEElyQqm2uCGSQrX/xjYDjniRUQx3NyU=" crossorigin="anonymous"></script>
-    <script>
-      var ChangeBranchData = {{ json .Data }};
-      </script>
-    <script src="/assets/processing.js"></script>
   </body>
 </html>
