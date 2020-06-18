@@ -58,9 +58,12 @@ type repository struct {
 	Fork          bool
 	Description   string
 	Private       bool
+	Archived      bool
 }
 
 func RepositoriesListHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("cache-control", "private, no-cache, no-store")
+
 	session, err := store.Get(r, "change-branch")
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -96,6 +99,7 @@ func RepositoriesListHandler(w http.ResponseWriter, r *http.Request) {
 			Fork:          repo.GetFork(),
 			Description:   repo.GetDescription(),
 			Private:       repo.GetPrivate(),
+			Archived:      repo.GetArchived(),
 		})
 	}
 
@@ -108,6 +112,8 @@ func RepositoriesListHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RepositoryProcessingHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("cache-control", "private, no-cache, no-store")
+
 	tmpl, err := templateFromFile("processing.html.tmpl")
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -146,6 +152,8 @@ func RepositoryProcessingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RepositoryConvertHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("cache-control", "private, no-cache, no-store")
+
 	session, err := store.Get(r, "change-branch")
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

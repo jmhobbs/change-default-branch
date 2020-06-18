@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -20,6 +19,7 @@ var (
 	store     *sessions.CookieStore
 	conf      *oauth2.Config
 	templates *rice.Box
+	files     *rice.Box
 )
 
 const (
@@ -33,10 +33,9 @@ func main() {
 	var (
 		listen       *string = fs.String("listen", "localhost:9090", "http listen address")
 		sessionKey   *string = fs.String("session-key", "", "session secret (32 bytes, random, and secret)")
-		base         *string = fs.String("base-url", "http://localhost:9090", "base url, used for OAuth2 URL generation")
 		clientID     *string = fs.String("client-id", "", "Github OAuth2 client ID")
 		clientSecret *string = fs.String("client-secret", "", "Github OAuth2 client secret")
-		_                    = flag.String("config", "", "config file (optional)")
+		_                    = fs.String("config", "", "config file (optional)")
 	)
 
 	ff.Parse(fs, os.Args[1:],
@@ -46,6 +45,7 @@ func main() {
 	)
 
 	templates = rice.MustFindBox("templates")
+	files = rice.MustFindBox("files")
 
 	store = sessions.NewCookieStore([]byte(*sessionKey))
 
@@ -57,7 +57,6 @@ func main() {
 			AuthURL:  "https://github.com/login/oauth/authorize",
 			TokenURL: "https://github.com/login/oauth/access_token",
 		},
-		RedirectURL: fmt.Sprintf("%s/auth/callback", *base),
 	}
 
 	http.HandleFunc("/auth/callback", AuthCallbackHandler)
@@ -65,7 +64,7 @@ func main() {
 	http.HandleFunc("/repositories", RepositoriesListHandler)
 	http.HandleFunc("/processing", RepositoryProcessingHandler)
 	http.HandleFunc("/repositories/convert", RepositoryConvertHandler)
-	http.Handle("/", http.FileServer(rice.MustFindBox("files").HTTPBox()))
+	http.HandleFunc("/", ContentHandler)
 
 	log.Printf("Listening on %s", *listen)
 	log.Fatal(http.ListenAndServe(*listen, nil))

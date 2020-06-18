@@ -1,14 +1,18 @@
 $(function () {
   var hadErrors = false;
 
+  $(".collapsible .state").on("click", function () {
+    $(this).parents(".collapsible").toggleClass("collapsed");
+  });
+
   function processNext() {
     var next = $(".pending").first();
     if(next.length == 0) { 
       // All done!
       if(hadErrors) {
-        $("h1").text("Done, with errors.");
+        $(".container h1").text("Done, with errors.");
       } else {
-        $("h1").text("Success!");
+        $(".container h1").text("Success!");
       }
       return;
     }
@@ -24,7 +28,6 @@ $(function () {
       success: function (data, _, _) {
         next.removeClass("processing").addClass("complete");
         next.find(".state").text("Complete!");
-        next.append("<pre></pre>");
         next.find("pre").text(data);
         setTimeout(processNext, 500);
       },
@@ -32,8 +35,8 @@ $(function () {
         hadErrors = true;
         next.removeClass("processing").addClass("error");
         next.find(".state").text("Error");
-        next.append("<pre></pre>");
         next.find("pre").text(xhr.responseText);
+        next.find(".collapsible").removeClass("collapsed");
         setTimeout(processNext, 1500);
       },
     });

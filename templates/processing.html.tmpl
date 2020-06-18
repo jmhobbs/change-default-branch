@@ -4,33 +4,51 @@
     <title>Change Branch</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/assets/style.css">
   </head>
   <body>
-    <div class="container">
-      <h1>Processing</h1>
-      <p>Hang tight, this can take a minute.</p>
-      <hr/>
-      <p>Changing Default Branch To <code>{{.Branch}}</code></p>
-      <hr/>
-      {{ range .Repositories}}
-      <div id="repo-{{.}}" data-repo="{{.}}" class="processing-repository pending">
-        <h3>{{.}}</h3>
-        <p class="state">Pending...</p>
+    <div class="wrapper">
+      <div class="content">
+        <header>
+          <a href="/auth/redirect" class="cta">Get Started</a>
+          <h1>
+            <a href="/">
+              <img src="/assets/logo.png" alt="no master branch" title="Change Default Branch" />
+              Change Default Branch
+            </a>
+          </h1>
+        </header>
+        <div class="container">
+          <h1>Processing</h1>
+          <p>Hang tight, this can take a minute.</p>
+          <hr/>
+          <p>Changing Default Branch To <code>{{.Branch}}</code></p>
+          <hr/>
+          {{ range .Repositories}}
+          <div id="repo-{{.}}" data-repo="{{.}}" class="processing-repository pending">
+            <h3>{{.}}</h3>
+            <div class="collapsible collapsed">
+              <p class="state">Pending...</p>
+              <pre></pre>
+            </div>
+          </div>
+          {{end}}
+          <hr/>
+          <p class="all-done">Pretty easy right? Tell others so they can ditch the awful <code>master</code> branch.</p>
+        </div>
       </div>
-      {{end}}
-      <hr/>
-      <p class="all-done">Pretty easy right? Tell others so they can ditch the awful <code>master</code> branch.</p>
+      <footer>
+        <div class="inner">
+          <span class="blm">Black Lives Matter</span>
+          <p>An <a href="https://github.com/jmhobbs/change-default-branch">open-source project</a>.  Read the <a href="/terms-of-service">terms of service</a>.</p>
+          <p><a href="https://thenounproject.com/term/fork/5005/">fork</a> icon by <a href="https://thenounproject.com/DmitryBaranovskiy/">Dmitry Baranovskiy</a>, from <a href="https://thenounproject.com/">the Noun Project</a></p>
+        </div>
+      </footer>
     </div>
-    <footer>
-      <span class="blm">Black Lives Matter</span>
-      <p>An <a href="https://github.com/jmhobbs/change-default-branch">open-source project</a>.  Read the <a href="/terms-of-service">terms of service</a>.</p>
-      <p><a href="https://thenounproject.com/term/fork/5005/">fork</a> icon by <a href="https://thenounproject.com/DmitryBaranovskiy/">Dmitry Baranovskiy</a>, from <a href="https://thenounproject.com/">the Noun Project</a></p>
-    </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js" integrity="sha256-vrn14y7WH7zgEElyQqm2uCGSQrX/xjYDjniRUQx3NyU=" crossorigin="anonymous"></script>
     <script>
       var ChangeBranchData = {{ json .Data }};
       </script>
-    <script src="processing.js"></script>
+    <script src="/assets/processing.js"></script>
   </body>
 </html>

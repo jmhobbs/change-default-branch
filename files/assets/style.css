@@ -7,9 +7,27 @@ html, body {
   margin: 0;
 }
 
-.container {
+.wrapper {
+  position: relative;
   min-height: 100%;
-  margin-bottom: -7.25em;
+}
+
+.content {
+  padding-bottom: 7.25em;
+}
+
+.container {
+  margin: 0 2em;
+}
+
+footer {
+  height: 5.25em;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+footer .inner {
   margin: 1em 2em;
 }
 
@@ -19,6 +37,8 @@ html, body {
   padding: 0.5em;
   text-decoration: none;
   color: #000;
+  margin: 1em 0;
+  display: inline-block;
 }
 .cta:hover {
   background: #000;
@@ -39,7 +59,7 @@ input[type=text].error {
   background-color: #fff7f7;
 }
 
-.label, .private {
+.label, .private, .archived {
   font-size: 0.75em;
   background: #CCC;
   padding: 0.1em 0.5em;
@@ -51,6 +71,11 @@ input[type=text].error {
 .private {
   color: white;
   background: #1e5ed4;
+}
+
+.archived {
+  background: #6d6262;
+  color: white;
 }
 
 .label.error {
@@ -111,12 +136,9 @@ img.fork {
 }
 
 footer {
-  height: 3.25em;
   font-size: 0.75em;
   color: #444;
-  margin-top: 4em;
   background: #efefef;
-  padding: 1em 2em;
 }
 
 footer .blm {
@@ -143,4 +165,84 @@ footer p {
 
 .processing-repository.complete .state {
   color: green;
+}
+
+.monospace {
+  font-family: monospace;
+  line-height: 1.5em;
+}
+
+header {
+  border-bottom: 1px solid #444;
+  padding: 1em 2em;
+}
+
+header h1 {
+  margin: 0;
+}
+
+header img {
+  height: 2em;
+  vertical-align: middle;
+  margin-right: 0.5em;
+}
+
+header a {
+  text-decoration: none;
+  color: #000;
+}
+
+.center {
+  text-align: center;
+}
+
+hr {
+  background: #CCC;
+  height: 1px;
+  border: none;
+}
+
+blockquote {
+  background: #F0F0F0;
+  margin: 2em 0;
+  padding: 1em 2em;
+  color: #111;
+  border-radius: 0.5em;
+}
+
+header .cta {
+  float: right;
+}
+
+li.disabled label {
+  color: #888;
+}
+li.disabled .description {
+  color: #ccc;
+}
+
+.collapsible .state {
+  cursor: pointer;
+}
+
+.collapsible .state:before {
+  content: '⬇';
+  color: black;
+  padding-right: 0.5em;
+}
+
+.collapsible.collapsed .state:before {
+  content: '⬆';
+}
+
+.collapsible.collapsed pre {
+  display: none;
+}
+
+.collapsible pre {
+  background: #222;
+  color: white;
+  padding: 0.5em 1em;
+  font-size: 0.9em;
+  margin: 0;
 }
