@@ -65,14 +65,8 @@ type repository struct {
 func RepositoriesListHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("cache-control", "private, no-cache, no-store")
 
-	session, err := store.Get(r, "change-branch")
+	client, err := getClient(r)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-	client, err := clientFromSession(session)
-	if err != nil {
-		// todo: redirect to auth, make this middleware
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -156,12 +150,7 @@ func RepositoryProcessingHandler(w http.ResponseWriter, r *http.Request) {
 func RepositoryConvertHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("cache-control", "private, no-cache, no-store")
 
-	session, err := store.Get(r, "change-branch")
-	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-	client, err := clientFromSession(session)
+	client, err := getClient(r)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -249,7 +238,7 @@ func changeBranch(client *github.Client, owner, name, branch string) ([]string, 
 				return logs, err
 			}
 			// sleep here because sometimes the next call results in a missing branch error, let it sync up
-			time.Sleep(5 * time.Second)
+			time.Sleep(time.Second)
 		} else {
 			return logs, err
 		}
@@ -263,11 +252,8 @@ func changeBranch(client *github.Client, owner, name, branch string) ([]string, 
 	logs = append(logs, "Updating repository default branch.")
 	_, resp, err := client.Repositories.Edit(context.TODO(), owner, name, repo)
 	if err != nil {
-		// todo: parse error from github api
 		logs = append(logs, fmt.Sprintf("Error from Github API: %s", resp.Status))
 	}
-
-	// todo: catch 422 Validation Failed here and offer to retry in the app
 
 	return logs, err
 }
