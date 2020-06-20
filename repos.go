@@ -1,14 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/google/go-github/v32/github"
 	"github.com/gorilla/csrf"
@@ -65,7 +67,7 @@ type repository struct {
 func RepositoriesListHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("cache-control", "private, no-cache, no-store")
 
-	client, err := getClient(r)
+	_, client, err := getClient(r)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -150,7 +152,7 @@ func RepositoryProcessingHandler(w http.ResponseWriter, r *http.Request) {
 func RepositoryConvertHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("cache-control", "private, no-cache, no-store")
 
-	client, err := getClient(r)
+	ts, client, err := getClient(r)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -184,7 +186,14 @@ func RepositoryConvertHandler(w http.ResponseWriter, r *http.Request) {
 	owner := split[0]
 	repo = split[1]
 
-	logs, err := changeBranch(client, owner, repo, branch)
+	token, err := ts.Token()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	logs, err := changeBranch(token.AccessToken, client, owner, repo, branch)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, strings.Join(logs, "\n"), http.StatusInternalServerError)
@@ -194,7 +203,7 @@ func RepositoryConvertHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, strings.Join(logs, "\n"))
 }
 
-func changeBranch(client *github.Client, owner, name, branch string) ([]string, error) {
+func changeBranch(token string, client *github.Client, owner, name, branch string) ([]string, error) {
 	logs := []string{
 		fmt.Sprintf("Changing branch to %q.", branch),
 		fmt.Sprintf("Getting the repository %q.", name),
@@ -237,8 +246,6 @@ func changeBranch(client *github.Client, owner, name, branch string) ([]string, 
 			if err != nil {
 				return logs, err
 			}
-			// sleep here because sometimes the next call results in a missing branch error, let it sync up
-			time.Sleep(time.Second)
 		} else {
 			return logs, err
 		}
@@ -250,10 +257,55 @@ func changeBranch(client *github.Client, owner, name, branch string) ([]string, 
 	repo.DefaultBranch = github.String(branch)
 
 	logs = append(logs, "Updating repository default branch.")
-	_, resp, err := client.Repositories.Edit(context.TODO(), owner, name, repo)
+
+	// The go-github package fails on private repo edits for some reason, so we do our own thing here
+	bodyBytes, err := json.Marshal(repositoryEdit{branch})
 	if err != nil {
-		logs = append(logs, fmt.Sprintf("Error from Github API: %s", resp.Status))
+		logs = append(logs, "Unable to create request body.")
+		return logs, err
+	}
+	body := ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	req, err := http.NewRequest("PATCH", fmt.Sprintf("https://api.github.com/repos/%s/%s", owner, name), body)
+	if err != nil {
+		log.Println(err)
+		logs = append(logs, "Unable to create API request.")
+		return logs, err
+	}
+	req.Header.Add("accept", "application/vnd.github.v3+json")
+	req.Header.Add("content-type", "application/json")
+	req.Header.Add("authorization", "token "+token)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		logs = append(logs, "Error making request to API")
+		return logs, err
 	}
 
-	return logs, err
+	if resp.StatusCode >= 400 {
+		logs = append(logs, fmt.Sprintf("HTTP Response: %d", resp.StatusCode))
+		defer resp.Body.Close()
+		dec := json.NewDecoder(resp.Body)
+		var gherr githubError
+		err = dec.Decode(&gherr)
+		if err != nil {
+			logs = append(logs, "Error reading response from Github")
+		} else {
+			logs = append(logs, fmt.Sprintf("API Error: %q", gherr.Message))
+		}
+		return logs, errors.New("API Error")
+	}
+
+	return logs, nil
+}
+
+type repositoryEdit struct {
+	DefaultBranch string `json:"default_branch"`
+}
+
+type githubError struct {
+	Message string `json:"message"`
+	Errors  []struct {
+		Message string `json:"message"`
+	} `json:"errors"`
 }

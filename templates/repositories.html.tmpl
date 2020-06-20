@@ -21,12 +21,6 @@
         <div class="container">
           <h1>Choose Repositories To Update</h1>
 
-          <div class="alert">
-            <p>Currently, this tool does not work for private repositories.  It will create the new branch for you, but an error will occur when setting that branch as the new default.</p>
-            <p>I've opened a ticket with Github, so hopefully there will be resolution soon.</p>
-            <p>Feel free to still run the tool on your private repositories, and either manually switch them after, or come back soon and run the tool again after the problem is fixed.</p>
-          </div>
-
           <form method="POST" action="/repos/processing">
 
             {{ .csrfField }}

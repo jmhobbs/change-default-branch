@@ -49,23 +49,24 @@ func authRequiredMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func getClient(r *http.Request) (*github.Client, error) {
+func getClient(r *http.Request) (oauth2.TokenSource, *github.Client, error) {
 	var tok oauth2.Token
 
 	v := r.Context().Value(ContextOAuthToken)
 	token, ok := v.([]byte)
 	if !ok {
-		return nil, errors.New("invalid oauth token")
+		return nil, nil, errors.New("invalid oauth token")
 	}
 
 	err := json.Unmarshal(token, &tok)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	ts := conf.TokenSource(context.Background(), &tok)
 	tc := oauth2.NewClient(context.Background(), ts)
-	return github.NewClient(tc), nil
+
+	return ts, github.NewClient(tc), nil
 }
 
 // AuthCallbackHandler processes OAuth callbacks from Github
